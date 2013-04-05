@@ -1,0 +1,30 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script  src="http://code.jquery.com/jquery-latest.min.js"  type="text/javascript"></script>
+        <script  type="text/javascript">
+            
+            var json_array = '{"7aorceuaosten":{"BookName":"Silk road","Price":10},"a5o4eu98aoue6qj6i":{"BookName":"Water falls","Price":13},"99qk9o1qk7":{"BookName":"Bake Ran","Price":7}}';
+ 
+var objTest = jQuery.parseJSON(json_array);
+
+var branch = new Array();
+branch[0] = "BookName";
+
+var result = new filterObject(objTest,branch,'AtoZ').AtoZ().Back();
+
+console.log(result)
+            
+            
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+    </body>
+</html>
