@@ -1,0 +1,548 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../assets/js/libs/jquery-1.9.0/jquery.min.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="main.css" /> -->
+       
+    <link rel="stylesheet" href="../assets/js/libs/jqueryui-1.10.2/themes/base/jquery-ui.css" />
+    <link rel="stylesheet" href="../assets/js/libs/jqueryui-plugins/dropdown-cat/jquery.jui_dropdown.css" />
+    <link rel="stylesheet" href="../assets/js/libs/tablesort/themes/blue/style.css" />
+    <link rel="stylesheet" href="../assets/js/libs/jquery-crontab/gentleSelect/jquery-gentleSelect.css" />
+    
+   <link rel="stylesheet" type="text/css" href="../assets/js/libs/gritter/css/jquery.gritter.css" />
+  <script src="../assets/js/libs/jqueryui-1.10.2/ui/minified/jquery-ui.min.js"></script>
+  <script src="../assets/js/timepicker.js"></script>
+  <script src="../assets/js/libs/jquery-crontab/gentleSelect/jquery-gentleSelect-min.js"></script>
+  <script src="../assets/js/libs/jqueryui-plugins/dropdown-cat/jquery.jui_dropdown.min.js"></script>
+   <script src="../assets/js/libs/tablesort/jquery.tablesorter.min.js"></script>
+   <script src="../assets/js/libs/gritter/js/jquery.gritter.min.js"></script>
+    <script type="text/javascript"> 
+    
+     actions1 = [{"label":"Compact","value":"compact"},
+                {"label":"Backup","value":"backup"},
+                {"label":"Ram Quote","value":"ramquote"},
+                {"label":"Compact","value":"compact"},
+                {"label":"Add Node","value":"addnode"},
+                {"label":"Remove Node","value":"removenode"},
+                {"label":"Fail Over","value":"failover"},
+                {"label":"Restart CB","value":"restartcb"},
+                {"label":"Stop CB","value":"stopcb"}
+               ];
+     /*
+     actions1 = [
+         {label:'Compact',value:'compact',category:'Per Bucket'},
+         {label:'BackUp',value:'backup',category:'Per Bucket'},
+         {label:'ReStore',value:'restore',category:'Per Bucket'},
+         {label:'RAM Size Change',value:'ram',category:'Per Bucket'},
+         {label:'Add New Node',value:'addnode',category:'Cluster'},
+         {label:'Remove Node',value:'removenode',category:'Cluster'},
+         {label:'Fail Over',value:'failover',category:'Cluster'},
+         {label:'Restart CB',value:'restart',category:'Per Node'},
+         {label:'Stop CB',value:'stop',category:'Per Node'}
+         ];
+     */
+    $(document).ready(function(){
+        /*
+        $('#jobCronTab').cron({
+  
+        }); 
+        */
+    start_make()
+    });
+    
+    
+    function start_make(){
+        
+             drop_down_actions();
+       make_current_server_table();
+       
+         $("#jobsTables").tablesorter(); 
+        
+    }
+  
+   $.widget( "custom.catcomplete", $.ui.autocomplete, {
+    _renderMenu: function( ul, items ) {
+      var that = this,
+        currentCategory = "";
+      $.each( items, function( index, item ) {
+        if ( item.category !== currentCategory ) {
+          ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+          currentCategory = item.category;
+        }
+        that._renderItemData( ul, item );
+      });
+    }
+  });
+  
+ $(function() {
+     var cron_options = [
+         {label:"* * * * * Every Min , Every Day",value:"* * * * *", category: "" },
+         {label:"0 * * * * Every Hr , Every Day",value:"0 * * * *", category: "" },
+         {label:"* * 0 * * Every Day @ Midnight",value:"* * 0 * *", category: "" },
+         {label:"* * * * 1-5 Every Min,No Sat,Sun",value:"* * * * 1-5", category: "WEEKDAYS" },
+         {label:"0 * * * 1-5 Every Hr,No Sat,Sun",value:"0 * * * 1-5", category: "WEEKDAYS" }
+          ];
+    /*
+        var cron_options = [
+      { label: "anders", category: "" },
+      { label: "andreas", category: "" },
+      { label: "antal", category: "" },
+      { label: "annhhx10", category: "Products" },
+      { label: "annk K12", category: "Products" },
+      { label: "annttop C13", category: "Products" },
+      { label: "anders andersson", category: "People" },
+      { label: "andreas andersson", category: "People" },
+      { label: "andreas johnson", category: "People" }
+    ];
+    */
+    
+    $( "#jobCronTabOptions" ).catcomplete({
+      source: cron_options
+    });
+  });
+    
+$(function() {
+    $( document ).tooltip({
+      position: {
+        my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      }
+    });
+  });
+    
+   $(function() {
+       $( "#jobDateTimePicker" ).datetimepicker({minDate: 0 });
+  });
+    
+    function drop_down_actions(){
+       
+       // var actions = ['Backup','Restore','Add Node','Remove Node','Fail Over','Restart CB','Stop CB',]
+        
+        var options = '';
+        options = options + '<option value="">(Job Type)</option>';
+        jQuery.each(actions1, function(index,value){        
+           options = options + '<option value="'+value.value+'">'+value.label+'</option>';  
+        });
+        
+        $('#jobsDropDown').append(options);
+    }
+    
+    function make_current_server_table(){
+        
+        /*
+       var result = $.ajax({url:'page=jobs',
+                         cache:false,
+                         async:false,
+                         type:'GET'
+                        }).responseText; 
+        var obj = jQuery.parseJSON(result);
+       */   
+      
+        var obj = {};
+        
+        var server1 = new Object();
+        server1.ServerName = 'aoseuhcaoe8a098u';
+        server1.ServerAddress = '8.8.8.8';
+        server1.Group = 'Africa';
+        server1.Status = 'up';
+        server1.Xdcr = '4(4)';
+        
+        var server2 = new Object();
+        server2.ServerName = 'a09898yiu9oseuhcaoe8a098u';
+        server2.ServerAddress = 'aws-east-01-52.78.162.356-domain.aws.ec2.amazon.com';
+        server2.Group = 'Marvel';
+        server2.Status = 'pending';
+        server2.Xdcr = '2(5)';
+        
+        var server3 = new Object();
+        server3.ServerName = 'a09898yiu9oseuhcaoe8a098u';
+        server3.ServerAddress = '7.7.7.7';
+        server3.Group = 'Marvel';
+        server3.Status = 'down';
+        server3.Xdcr = '2(5)';
+        var obj = [server1,server2,server3];
+        
+       
+       
+       //filter
+       var group_filter = $('#jobsShowByGroups').val();
+       var status_filter = $('#jobShowByStatus').val();
+       
+        var html = '';
+       jQuery.each(obj, function(index,value){
+            if(group_filter === '' || group_filter === value.Group){
+                if(status_filter === '' || status_filter === value.Status){
+           html = html + '<tr>';
+                html = html + '<td align="center"><span id="jobGroupName_'+value.ServerName+'" ondblclick="edit_group_name(this)" title="Double Click To Edit Group Name.">'+value.Group+'</span></td>';
+                html = html + '<td align="center"><span id="status_'+value.ServerName+'" >'+ status_result(value.Status) +'</span></td>'; 
+                html = html + '<td align="center"><div>'+server_details(value.ServerName)+'</div></td>'; 
+                html = html + '<td align="center"><a href="#node_details='+value.ServerName+'" onclick="show_node_details(\''+value.ServerName+'\')" title="'+value.ServerAddress+'">'+short_host_name(value.ServerAddress)+'</a></td>'; 
+                html = html + '<td align="center">'+value.Xdcr+'</td>';
+                html = html + '<td align="center">30.1GB</td>';
+           html = html + '</tr>';
+                }
+            }
+        });
+        
+        $('#jobsTables > tbody').html(html);
+          
+    }
+    
+    function short_host_name(domainName){
+        
+     if(domainName.length > 20){ return domainName.slice(0,20)+'...';}else{ return domainName;}
+        
+    }
+    
+    function server_details(server){
+        var vbuckets = ['Default','logs','versions','Main'];
+        vbuckets.sort();
+     var html = '';
+     var counter = 1;
+ 
+      html = html +'<div class="vbuckets_per_node_list"> (Show All) ';
+      jQuery.each(vbuckets,function(index,value){
+       html = html + '<span style="font-weight:bold; text-align:left;" onclick="inject_server_action(\''+server +'\',\''+value+'\')">'+ counter +'. '+value+'</span>'; 
+    
+        html = html +' &nbsp;';
+        counter++;
+     
+     });
+        html = html + '</div>';
+        html = html + '<div id="ActionBox_'+server+'" class="action_box_data">'+node_vbucket_list(server)+'</div>';
+     
+     return html;
+        
+    }
+    
+    function node_vbucket_list(tableId){
+        
+        var html = '';
+        html = html +'<table id="PerBucketActionsTable_'+tableId+'" width="100%">';
+           html = html +'<thead>';
+              html = html+'</tr>';
+              html = html +'<th>&nbsp;</th>';
+              jQuery.each(actions1,function(index,value){ html=html +'<th>'+value.label+'</th>';});
+              html = html+'</tr>';
+           html = html +'</thead>';
+           html = html +'<tbody>';
+           html = html +'</tbody>';
+        html = html +'</table>';
+        return html;
+    }
+    
+    function inject_server_action(boxId,vbucket){
+    
+   //$('#ActionBox_'+boxId).fadeOut(250,function(){ $(this).html(make_action_for_vbucket(vbucket,boxId)).fadeIn(250); }); 
+
+    $('#ActionBox_'+boxId).append(make_action_for_vbucket(vbucket,boxId));
+    $('#ActionBox_'+boxId).show('slow');
+    
+    }
+    
+    function make_action_for_vbucket(vbucket,tableId){
+     
+     /*
+         var html = '<div class="action_per_vbucket">'+vbucket+': '
+         jQuery.each(actions,function(index,value2){
+        html = html + '<input type="checkbox"><label>'+value2+'</label>';   
+
+        });
+        html = html +'</div>'
+        */
+        //return html;
+        var html = '<tr>';
+        html = html +'<td align="center">'+vbucket+'</td>';
+      jQuery.each(actions1,function(index,value2){html = html +'<td align="center"><input value="'+value2.label+'" id="'+tableId+'-'+value2.label+'" name="vbucket-'+tableId+'" type="checkbox"></td>';});
+         html = html +'</tr>';
+         //console.log(html)
+      $('#PerBucketActionsTable_'+ tableId + ' > tbody').append(html);
+    }
+    
+    
+    function drop_down_backup(){
+    
+        
+        
+    }
+    function drop_down_restore(){
+        
+        
+        
+    }
+    
+    function edit_group_name(obj){
+        
+        //console.log(obj.id)
+        
+        var html = '<input class="jobGroupNameChange" id="jobGroupNameChange_'+obj.id+'" type="text" value="'+obj.innerText+'" onchange="update_group_name(this,\''+ obj.id+'\')">';
+        
+        $('#'+obj.id).html(html);
+    }
+    
+    function update_group_name(obj,id){
+
+        var update_value = obj.value;
+        if(update_value === ''){update_value = 'TEST';}
+        
+        $('#'+id).html(update_value);
+        
+        $.gritter.add({
+        sticky: false, 
+	// (string | mandatory) the heading of the notification
+	title: '<span style="color:green;font-size:18px;">UPDATED</span>',
+	// (string | mandatory) the text inside the notification
+	text: '<span style="font-size:12px;">Group Name Updated to: '+update_value+'</span>'
+        });
+        
+    }
+    
+    function show_node_details(nodeName){
+        
+        $('#jobNodeDetailsShow').toggle('slow');
+        
+    }
+    
+    
+    function status_result(string){
+        
+        var html = '';
+        
+        switch(string){
+          
+          case'up':
+          html='<span class="green_status">UP</span>'; 
+          break;
+          case'pending':
+          html='<span class="yellow_status">PENDING</span>'; 
+          break;
+          case'down':
+          html='<span class="red_status">DOWN</span>'; 
+          break;
+          default:
+          html='<span class="black_status">Unknown</span>';    
+          break;
+            
+           
+        }
+        return html;
+        
+    }
+    
+    
+    function do_job(){
+     
+        /*
+         * check selected options
+         * 
+         * 
+         */
+        
+     var status = $().val()
+        
+        
+        
+        
+    }
+    
+    </script>  
+   
+    </head>
+    <body>
+        <span style="float:left"><a href="/">Home</a>&nbsp;<a href="#cron_jobs">Cron Jobs List</a>&nbsp;<a href="#schedule_jobs">Schedule Jobs List</a>&nbsp;<a href="#logs">Logs</a></span><span style="float:left; margin-left:350px;">CouchBase Admin PLUS </span> <span style="float:right;"><a href="#">Settings</a>&nbsp;<a href="#">Log Out</a></span>
+        <br />
+        <div id="jobNodeDetailsShow" style="width:100%; height:300px; display: none;">
+            
+            http://www.jqwidgets.com/jquery-widgets-demo/demos/jqxbutton/index.htm?(web)
+            
+            http://shawnchin.github.io/jquery-cron/
+        </div>
+        
+        <label>Filter By: </label>
+ 
+       <select id="jobsShowByGroups" name="jobsShowByGroups" onchange="start_make()">
+        <option value="">(Groups All)</option> 
+           <option value="Africa">Africa</option> 
+           <option value="Marvel">Marvel</option>
+           <option value="TEST">TEST</option>
+       </select>    
+        <select id="jobShowByStatus" onchange="start_make()">
+         <option value="">(Status All)</option> 
+         <option value ="up">Up</option> 
+         <option value="pending">Pending</option> 
+         <option value="down">Down</option> 
+         <option value="unknown">Unknown</option> 
+        </select>        
+                
+        <span style="float:right;">        
+       <select id="jobsDropDown" name="jobsDropDown"></select>
+       &nbsp;&nbsp;&nbsp;
+       <input type="checkbox" checked="checked"><label>Do Job Now</label>
+       or  <span id="jobCronTab">
+           <input type="text" value=""  placeholder="Cron Job" id="jobCronTabOptions">
+          </span> 
+       or <input type="text" id="jobDateTimePicker" placeholder="Schedule Job" title="Schedule a one Time only Job">
+            <input type="button" value="Create Job"> 
+            </span>
+        <table id="jobsTables" class="tablesorter" cellpadding="0" cellspacing="0" width="100%">
+            <thead>
+            <th >Groups</th>
+            <th width="65px">Status</th>
+           <th>vBuckets</th>
+            <th width="150px">Host Address</th>
+            <th width="65px">XDCR</th>
+            <th width="100px">Documents</th>
+            </thead>
+            <tbody>
+            </tbody>    
+        </table>    
+    </body>
+   
+    
+    <style>
+        
+          .ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+  }
+        
+        .jobGroupNameChange{
+            width:50px;
+        }    
+        
+     tr:hover {
+	background-color: gainsboro;
+}   
+
+.ui-button-text-only .ui-button-text {
+padding: .2em .2em;
+}
+
+.green_status{
+    
+     font-size:14px; 
+     color:#00FF00; 
+     font-weight:bold;  
+     font-style: italic;
+     text-shadow:1px 1px #848484;
+}
+.red_status{    
+     font-size:14px; 
+     color:red; 
+     font-weight:bold;  
+     font-style: italic;
+     text-shadow:1px 1px #848484;
+}
+.yellow_status{
+    
+     font-size:14px; 
+     color:#FFFF00; 
+     font-weight:bold;  
+     font-style: italic;
+     text-shadow:1px 1px #848484;
+}
+.black_status{
+    
+     font-size:14px; 
+     color:black; 
+     font-weight:bold;  
+     font-style: italic;
+}
+
+
+.action_box_data{
+    
+    width:100%; 
+    height:auto; 
+    max-height: 200px;
+    overflow-y: auto;
+    background-color:lavender; 
+        display:none;
+}
+.vbuckets_per_node_list{
+    
+    text-align: left;
+}
+.action_per_vbucket{
+    float:left;
+}
+
+/* css for timepicker */
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; }
+.ui-timepicker-rtl dl dd { margin: 0 65px 10px 10px; }
+
+
+
+  .ui-tooltip, .arrow:after {
+    background: black;
+    border: 2px solid white;
+  }
+  .ui-tooltip {
+    padding: 10px 20px;
+    color: white;
+    border-radius: 20px;
+    font: bold 14px "Helvetica Neue", Sans-Serif;
+    text-transform: uppercase;
+    box-shadow: 0 0 7px black;
+  }
+  .arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    tranform: rotate(45deg);
+  }
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }
+
+    </style>
+</html>
